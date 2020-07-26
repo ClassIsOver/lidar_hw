@@ -26,6 +26,21 @@ bool OdomCalib::Add_Data(Eigen::Vector3d Odom,Eigen::Vector3d scan)
     if(now_len<INT_MAX)
     {
         //TODO: 构建超定方程组
+        // Ai
+        Eigen::MatrixXd<3,9,double> A_append.
+        A_append.setZero();
+        A_append.block<1,3>(0,0) = Odom.transpose();
+        A_append.block<1,3>(1,3) = Odom.transpose();
+        A_append.block<1,3>(2,6) = Odom.transpose();
+
+        // bi
+        Eigen::MatrixXd<3,1,double> b_append = scan;
+
+        // Append Ai, bi to A and b
+        A.conservativeResize(3 * now_len + 3, Eigen::NoChange);
+        b.conservativeResize(3 * now_len + 3, Eigen::NoChange);
+        A.block<3,9>(3 * now_len) = A_append;
+        b.block<3,1>(3 * now_len) = b_append;
         //end of TODO
         now_len++;
         return true;
@@ -46,6 +61,7 @@ Eigen::Matrix3d OdomCalib::Solve()
     Eigen::Matrix3d correct_matrix;
 
     //TODO: 求解线性最小二乘
+    corrected_matrix = (A.transpose() * A).inverse() * A.transpose() * b;
     //end of TODO
 
     return correct_matrix;

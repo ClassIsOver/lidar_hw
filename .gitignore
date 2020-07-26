@@ -1,5 +1,2 @@
 .DS_Store
-
-HW1/basicTransformStudy/build/
-
-HW2/calib_odom/build/
+build
