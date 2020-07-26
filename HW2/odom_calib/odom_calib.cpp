@@ -14,7 +14,7 @@ string odom_file = "./odom.txt";
 
 int main(int argc, char** argv)
 {
-    // 放置激光雷达的时间和匹配值 t_s s_x s_y s_th
+    // 放置激光雷达的时间和匹配值 time_s s_x s_y s_theta
     vector<vector<double>> s_data;
     // 放置轮速计的时间和左右轮角速度 t_r w_L w_R
     vector<vector<double>> r_data;
@@ -83,6 +83,9 @@ int main(int argc, char** argv)
             last_rt = s_t;
             // 填充A, b矩阵
             //TODO: (3~5 lines)
+            A(id_s, 0) = w_Lt;
+            A(id_s, 1) = w_Rt;
+            b(id_s)    = s_th;
             //end of TODO
             w_Lt = 0;
             w_Rt = 0;
@@ -92,6 +95,7 @@ int main(int argc, char** argv)
     // 进行最小二乘求解
     Eigen::Vector2d J21J22;
     //TODO: (1~2 lines)
+    J21J22 = (A.transpose() * A).inverse() * A.transpose() * b;
     //end of TODO
     const double &J21 = J21J22(0);
     const double &J22 = J21J22(1);
@@ -142,6 +146,10 @@ int main(int argc, char** argv)
             last_rt = s_t;
             // 填充C, S矩阵
             //TODO: (4~5 lines)
+            C(2 * id_s    ) = cx;
+            C(2 * id_s + 1) = cy;
+            S(2 * id_s    ) = s_x;
+            S(2 * id_s + 1) = s_y;
             //end of TODO
             cx = 0;
             cy = 0;
@@ -154,6 +162,9 @@ int main(int argc, char** argv)
     double r_L;
     double r_R;
     //TODO: (3~5 lines)
+    b = (C.transpose() * C).inverse() * C.transpose() * S;
+    r_L = -J21 * b;
+    r_R =  J22 * b;
     //end of TODO
     cout << "b: " << b_wheel << endl;
     cout << "r_L: " << r_L << endl;
