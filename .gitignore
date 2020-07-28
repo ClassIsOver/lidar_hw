@@ -1,2 +1,7 @@
 .DS_Store
 build
+devel
+.vscode
+*.bag
+HW2/odom_calib/odom_calib
+.catkin_workspace

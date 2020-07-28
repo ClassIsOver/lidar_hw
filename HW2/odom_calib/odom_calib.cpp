@@ -95,7 +95,7 @@ int main(int argc, char** argv)
     // 进行最小二乘求解
     Eigen::Vector2d J21J22;
     //TODO: (1~2 lines)
-    J21J22 = (A.transpose() * A).inverse() * A.transpose() * b;
+    J21J22 = A.jacobiSvd(Eigen::ComputeThinU | Eigen::ComputeThinV).solve(b);
     //end of TODO
     const double &J21 = J21J22(0);
     const double &J22 = J21J22(1);
@@ -103,11 +103,11 @@ int main(int argc, char** argv)
     cout << "J22: " << J22 << endl;
 
     // 第二步，求解轮间距b
-    Eigen::VectorXd C;
-    Eigen::VectorXd S;
+    Eigen::MatrixXd C;
+    Eigen::MatrixXd S;
     // 设置数据长度
-    C.conservativeResize(10000);
-    S.conservativeResize(10000);
+    C.conservativeResize(10000,1);
+    S.conservativeResize(10000,1);
     C.setZero();
     S.setZero();
 
@@ -146,10 +146,10 @@ int main(int argc, char** argv)
             last_rt = s_t;
             // 填充C, S矩阵
             //TODO: (4~5 lines)
-            C(2 * id_s    ) = cx;
-            C(2 * id_s + 1) = cy;
-            S(2 * id_s    ) = s_x;
-            S(2 * id_s + 1) = s_y;
+            C(2 * id_s    ,0) = cx;
+            C(2 * id_s + 1,0) = cy;
+            S(2 * id_s    ,0) = s_x;
+            S(2 * id_s + 1,0) = s_y;
             //end of TODO
             cx = 0;
             cy = 0;
@@ -162,9 +162,12 @@ int main(int argc, char** argv)
     double r_L;
     double r_R;
     //TODO: (3~5 lines)
-    b = (C.transpose() * C).inverse() * C.transpose() * S;
-    r_L = -J21 * b;
-    r_R =  J22 * b;
+    Eigen::Matrix<double,1,1> bmat = 
+      C.jacobiSvd(Eigen::ComputeThinU | Eigen::ComputeThinV).solve(S);
+    b_wheel = bmat[0];
+    //b = (C.transpose() * C).inverse() * C.transpose() * S;
+    r_L = -J21 * b_wheel;
+    r_R =  J22 * b_wheel;
     //end of TODO
     cout << "b: " << b_wheel << endl;
     cout << "r_L: " << r_L << endl;

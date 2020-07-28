@@ -23,24 +23,15 @@ Ax = b
 bool OdomCalib::Add_Data(Eigen::Vector3d Odom,Eigen::Vector3d scan)
 {
 
-    if(now_len<INT_MAX)
+    if(now_len < INT_MAX && 3 * now_len + 3 <= data_len)
     {
         //TODO: 构建超定方程组
-        // Ai
-        Eigen::MatrixXd<3,9,double> A_append.
-        A_append.setZero();
-        A_append.block<1,3>(0,0) = Odom.transpose();
-        A_append.block<1,3>(1,3) = Odom.transpose();
-        A_append.block<1,3>(2,6) = Odom.transpose();
-
-        // bi
-        Eigen::MatrixXd<3,1,double> b_append = scan;
-
-        // Append Ai, bi to A and b
-        A.conservativeResize(3 * now_len + 3, Eigen::NoChange);
-        b.conservativeResize(3 * now_len + 3, Eigen::NoChange);
-        A.block<3,9>(3 * now_len) = A_append;
-        b.block<3,1>(3 * now_len) = b_append;
+        // A
+        A.block<1,3>(3 * now_len    , 0) = Odom.transpose();
+        A.block<1,3>(3 * now_len + 1, 3) = Odom.transpose();
+        A.block<1,3>(3 * now_len + 2, 6) = Odom.transpose();
+        // b
+        b.block<3,1>(3 * now_len, 0) = scan;
         //end of TODO
         now_len++;
         return true;
@@ -61,7 +52,10 @@ Eigen::Matrix3d OdomCalib::Solve()
     Eigen::Matrix3d correct_matrix;
 
     //TODO: 求解线性最小二乘
-    corrected_matrix = (A.transpose() * A).inverse() * A.transpose() * b;
+    std::cout << "begin solve!" <<  std::endl;
+    Eigen::Map<Eigen::Matrix<double, 9, 1> > col_matrix(correct_matrix.data());
+    col_matrix = A.jacobiSvd(Eigen::ComputeThinU | Eigen::ComputeThinV).solve(b);
+    std::cout << "solve finish!" <<  std::endl;
     //end of TODO
 
     return correct_matrix;
