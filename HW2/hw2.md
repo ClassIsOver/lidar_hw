@@ -1,6 +1,23 @@
-3. 通过互联网总结学习线性方程组 Ax=b 的求解方法，回答以下问题:(2 分) 
-(1)对于该类问题，你都知道哪几种求解方法? 
+### 12.coding
+可能需要补充的知识：
+- ROS的subscriber和publisher的用法
+- ROS的message filter的基本用法
+- ROS的面对对象OOP编程
+
+```c
+    scan_filter_->registerCallback(boost::bind(&Scan2::scanCallBack, this, _1));
+```
+代码中的这里，是把函数的地址绑定到callback上
+不了解boost::bind的话，可以参考:
+http://blog.think-async.com/2010/04/bind-illustrated.html
+
+### 3. 通过互联网总结学习线性方程组 Ax=b 的求解方法，回答以下问题:(2 分) 
+#### (1)对于该类问题，你都知道哪几种求解方法? 
+首先线性方程组的解有可能有三种情况：有无数解，有唯一解，无解。
+
 LU分解，QR分解，SVD法，特征值分解法等。
+- 最直接的最小二乘解法，通解：$x^* = (A^TA)^{-1}b$
+
 (2)各方法的优缺点有哪些?分别在什么条件下较常被使用?
 
 

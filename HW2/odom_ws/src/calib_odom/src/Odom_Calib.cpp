@@ -23,15 +23,15 @@ Ax = b
 bool OdomCalib::Add_Data(Eigen::Vector3d Odom,Eigen::Vector3d scan)
 {
 
-    if(now_len < INT_MAX && 3 * now_len + 3 <= data_len)
+    if(now_len < INT_MAX &&)
     {
         //TODO: 构建超定方程组
         // A
-        A.block<1,3>(3 * now_len    , 0) = Odom.transpose();
-        A.block<1,3>(3 * now_len + 1, 3) = Odom.transpose();
-        A.block<1,3>(3 * now_len + 2, 6) = Odom.transpose();
+        A.block<1,3>(now_len % data_len * 3    , 0) = Odom.transpose();
+        A.block<1,3>(now_len % data_len * 3 + 1, 3) = Odom.transpose();
+        A.block<1,3>(now_len % data_len * 3 + 2, 6) = Odom.transpose();
         // b
-        b.block<3,1>(3 * now_len, 0) = scan;
+        b.block<3,1>(now_len % data_len * 3, 0) = scan;
         //end of TODO
         now_len++;
         return true;
@@ -54,7 +54,8 @@ Eigen::Matrix3d OdomCalib::Solve()
     //TODO: 求解线性最小二乘
     std::cout << "begin solve!" <<  std::endl;
     Eigen::Map<Eigen::Matrix<double, 9, 1> > col_matrix(correct_matrix.data());
-    col_matrix = A.jacobiSvd(Eigen::ComputeThinU | Eigen::ComputeThinV).solve(b);
+    // col_matrix = A.jacobiSvd(Eigen::ComputeThinU | Eigen::ComputeThinV).solve(b);
+    col_matrix = A.colPivHouseholderQr().solve(b);
     std::cout << "solve finish!" <<  std::endl;
     //end of TODO
 

@@ -95,7 +95,8 @@ int main(int argc, char** argv)
     // 进行最小二乘求解
     Eigen::Vector2d J21J22;
     //TODO: (1~2 lines)
-    J21J22 = A.jacobiSvd(Eigen::ComputeThinU | Eigen::ComputeThinV).solve(b);
+    // J21J22 = A.jacobiSvd(Eigen::ComputeThinU | Eigen::ComputeThinV).solve(b);
+    J21J22 = A.colPivHouseholderQr().solve(b);
     //end of TODO
     const double &J21 = J21J22(0);
     const double &J22 = J21J22(1);
@@ -163,7 +164,7 @@ int main(int argc, char** argv)
     double r_R;
     //TODO: (3~5 lines)
     Eigen::Matrix<double,1,1> bmat = 
-      C.jacobiSvd(Eigen::ComputeThinU | Eigen::ComputeThinV).solve(S);
+      C.colPivHouseholderQr().solve(S);
     b_wheel = bmat[0];
     //b = (C.transpose() * C).inverse() * C.transpose() * S;
     r_L = -J21 * b_wheel;
