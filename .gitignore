@@ -3,5 +3,8 @@ build
 devel
 .vscode
 *.bag
-HW2/odom_calib/odom_calib
+hw2/odom_calib/odom_calib
 .catkin_workspace
+
+hw3/LaserUndistortion_ws/src/champion_nav_msgs/src/CMakeLists.txt
+hw3/LaserUndistortion_ws/src/CMakeLists.txt
