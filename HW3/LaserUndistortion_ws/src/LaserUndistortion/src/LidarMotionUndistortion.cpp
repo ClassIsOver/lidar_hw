@@ -205,7 +205,7 @@ public:
        tf::Quaternion rotation_begin = segment_start_pose.getRotation();
        tf::Quaternion rotation_end   = segment_end_pose.getRotation();
 
-       for (int i = 0; i <= beam_number; i++){
+       for (int i = 1; i <= beam_number; i++){
          double ratio = static_cast<double>(i) / static_cast<double>(beam_number);
          tf::Vector3 origin = origin_begin.lerp(origin_end, ratio);
          tf::Quaternion rotation = rotation_begin.slerp(rotation_end, ratio);
