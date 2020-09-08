@@ -438,6 +438,22 @@ Eigen::Vector2d IMLSICPMatcher::ComputeNormal(std::vector<Eigen::Vector2d> &near
 
     //TODO
     //根据周围的激光点计算法向量，参考ppt中NICP计算法向量的方法
+    // 计算均值
+    Eigen::Vector2d points_sum = Eigen::Vector2d::Zeros();
+    for (size_t i = 0; i < nearPoints.size(); ++i){
+        points_sum = points_mean + nearPoints(i);
+    }
+    Eigen::Vector2d points_mean = 1.0/nearPoints.size() * points_sum;
+
+    // sigma
+    Eigen::Matrix2d sigma = Eigen::Matrix2d::Zeros();
+    for (size_t i = 0; i < nearPoints.size(); ++i){
+        sigma = sigma + (nearPoints(i) - points_mean) * (nearPoints(i) - points_mean).transpose();
+    }
+    sigma = 1.0/nearPoints.size() * sigma;
+
+    JacobiSVD<MatrixXf> svd(sigma, ComputeThinU | ComputeThinV);
+    
 
     //end of TODO
 
